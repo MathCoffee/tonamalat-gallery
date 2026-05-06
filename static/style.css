@@ -1,8 +1,8 @@
 :root {
     --bg-color: #0f172a;
     --text-color: #f8fafc;
-    --accent: #10b981; /* Jade green for Mesoamerican theme */
-    --accent-hover: #059669;
+    --accent: #d97706; /* Terracotta / Amber */
+    --accent-hover: #b45309;
     --glass-bg: rgba(30, 41, 59, 0.7);
     --glass-border: rgba(255, 255, 255, 0.1);
 }
@@ -39,14 +39,14 @@ body {
 
 .shape1 {
     width: 50vw; height: 50vw;
-    background: #047857; /* Jade */
+    background: #9a3412; /* Rust/Terracotta */
     top: -20%; left: -10%;
     border-radius: 50%;
 }
 
 .shape2 {
     width: 60vw; height: 60vw;
-    background: #eab308; /* Gold */
+    background: #78350f; /* Earthy Brown */
     bottom: -30%; right: -20%;
     border-radius: 50%;
     animation-delay: -5s;
@@ -54,7 +54,7 @@ body {
 
 .shape3 {
     width: 40vw; height: 40vw;
-    background: #b91c1c; /* Crimson */
+    background: #c2410c; /* Burnt Orange */
     top: 40%; left: 30%;
     border-radius: 50%;
     animation-delay: -10s;
@@ -84,7 +84,7 @@ header h1 {
     font-size: 3rem;
     font-weight: 800;
     margin-bottom: 1rem;
-    background: linear-gradient(90deg, #10b981, #eab308);
+    background: linear-gradient(90deg, #d97706, #9a3412);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
