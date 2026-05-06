@@ -79,7 +79,20 @@ item_dict = {item['id']: item for item in all_items}
 
 @app.route('/')
 def index():
-    return render_template('index.html', interactives=interactives, simulations=simulations)
+    return render_template('home.html')
+
+@app.route('/gallery/<category>')
+def gallery(category):
+    if category == 'interactives':
+        items = interactives
+        title = "Modelos Interactivos"
+    elif category == 'simulations':
+        items = simulations
+        title = "Simulaciones Visuales"
+    else:
+        return "Category not found", 404
+        
+    return render_template('gallery.html', items=items, title=title)
 
 @app.route('/view/<item_id>')
 def view_item(item_id):

@@ -112,6 +112,61 @@ header p {
     width: 100%;
 }
 
+.gallery-grid.three-columns {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width: 1024px) {
+    .gallery-grid.three-columns {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .gallery-grid.three-columns {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Home Selection Grid */
+.home-container {
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.selection-grid {
+    display: flex;
+    gap: 2rem;
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.selection-card {
+    text-align: center;
+    padding: 4rem 2rem;
+    width: 100%;
+    max-width: 400px;
+    text-decoration: none;
+    color: var(--text-color);
+}
+
+.selection-card .icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.back-nav {
+    margin-top: 3rem;
+    text-align: center;
+}
+
+.back-btn-large {
+    display: inline-block;
+    width: auto;
+    padding: 1rem 3rem;
+}
+
 .card {
     padding: 2rem;
     display: flex;

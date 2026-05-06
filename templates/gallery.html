@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - Galería Tonalpohualli</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="background-shapes">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+        <div class="shape shape3"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>{{ title }}</h1>
+            <p>Explora las simulaciones matemáticas y modelos interactivos.</p>
+        </header>
+
+        <section class="gallery-section">
+            <div class="gallery-grid three-columns">
+                {% for item in items %}
+                <div class="card glass-effect glow-on-hover-card">
+                    <span class="category-badge">{{ item.title.split(' ')[0] }}</span>
+                    <h3>{{ item.title }}</h3>
+                    <p>{{ item.description }}</p>
+                    <a href="{{ url_for('view_item', item_id=item.id) }}" class="btn">Visualizar</a>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <nav class="back-nav">
+            <a href="{{ url_for('index') }}" class="btn back-btn-large">
+                &larr; Volver a la Selección
+            </a>
+        </nav>
+
+        <footer>
+            &copy; 2026 Tlacuache Codex Lab. Todos los derechos reservados.
+        </footer>
+    </div>
+</body>
+</html>

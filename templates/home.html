@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galería Tonalpohualli</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="background-shapes">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+        <div class="shape shape3"></div>
+    </div>
+
+    <div class="container home-container">
+        <header>
+            <h1>Galería Tonalpohualli</h1>
+            <p>Explora las simulaciones matemáticas y modelos interactivos.</p>
+        </header>
+
+        <div class="selection-grid">
+            <a href="{{ url_for('gallery', category='interactives') }}" class="card glass-effect selection-card">
+                <div class="icon">⚙️</div>
+                <h2>Modelos Interactivos</h2>
+                <p>Explora y manipula las simulaciones interactivas directamente en tu navegador.</p>
+            </a>
+
+            <a href="{{ url_for('gallery', category='simulations') }}" class="card glass-effect selection-card">
+                <div class="icon">🎬</div>
+                <h2>Simulaciones Visuales</h2>
+                <p>Visualiza videos e imágenes de alta calidad de los mapeos y solenoides.</p>
+            </a>
+        </div>
+
+        <footer class="home-footer">
+            &copy; 2026 Tlacuache Codex Lab. Todos los derechos reservados.
+        </footer>
+    </div>
+</body>
+</html>
