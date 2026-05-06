@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendario — Rueda Calendárica V5</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--jade:#21a366;--gold:#eab308;--red:#dc2626;--bg:#0a111a;--card:rgba(20,31,45,0.92);--muted:#64748b;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Outfit',sans-serif;background:var(--bg);color:#e2e8f0;min-height:100vh;display:flex;flex-direction:column;align-items:center;}
+    header{text-align:center;padding:1rem 1rem 0.3rem;}
+    h1{font-size:2rem;font-weight:800;background:linear-gradient(90deg,var(--jade),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    header p{color:var(--muted);font-size:0.85rem;margin-top:2px;}
+    .wrap{position:relative;width:min(820px,98vw);margin:0.5rem auto;background:var(--card);border:1px solid rgba(33,163,102,0.3);border-radius:18px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.5);}
+    canvas{display:block;width:100%;cursor:grab;}
+    canvas:active{cursor:grabbing;}
+    .bar{display:flex;gap:0.6rem;align-items:center;flex-wrap:wrap;padding:0.5rem 0.8rem;border-top:1px solid rgba(255,255,255,0.07);background:rgba(0,0,0,0.25);}
+    .btn{background:rgba(33,163,102,0.12);border:1px solid var(--jade);color:var(--jade);border-radius:8px;padding:0.32rem 0.75rem;font-family:inherit;font-weight:600;cursor:pointer;font-size:0.8rem;transition:background .2s;}
+    .btn:hover{background:rgba(33,163,102,0.25);}
+    .btn.on{background:var(--jade);color:#fff;}
+    .cg{display:flex;align-items:center;gap:0.4rem;color:var(--muted);font-size:0.78rem;}
+    input[type=range]{accent-color:var(--jade);width:70px;}
+    .gbs{display:flex;gap:0.28rem;margin-left:auto;}
+    .gb{padding:0.26rem 0.5rem;border-radius:5px;border:1px solid;font-family:inherit;font-size:0.72rem;font-weight:600;cursor:pointer;background:transparent;user-select:none;transition:background .2s;}
+    .g1{border-color:var(--jade);color:var(--jade);}
+    .g2{border-color:var(--gold);color:var(--gold);}
+    .g3{border-color:var(--red);color:var(--red);}
+    .info{display:grid;grid-template-columns:repeat(3,1fr);gap:0.6rem;width:min(820px,98vw);margin:0 auto 1rem;}
+    .gc{background:var(--card);border-radius:12px;padding:0.65rem 0.8rem;border-left:4px solid;}
+    .gc:nth-child(1){border-color:var(--jade);}
+    .gc:nth-child(2){border-color:var(--gold);}
+    .gc:nth-child(3){border-color:var(--red);}
+    .gn{font-size:0.68rem;color:var(--muted);}
+    .gv{font-size:1.45rem;font-weight:800;line-height:1.1;}
+    .gi{font-size:0.67rem;color:var(--muted);margin-top:1px;}
+    .day-box{text-align:center;grid-column:1/-1;grid-row:1;background:var(--card);border-radius:12px;padding:0.5rem;border:1px solid rgba(33,163,102,0.25);}
+    .day-num{font-size:1.2rem;font-weight:700;color:var(--jade);}
+    footer{color:var(--muted);font-size:0.7rem;padding:0.6rem;text-align:center;}
+    .nw{width:min(820px,98vw);margin:0 auto 0.8rem;background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.3);border-radius:12px;padding:0.7rem 0.9rem;}
+    .nt{color:#a855f7;font-weight:700;font-size:0.75rem;margin-bottom:0.5rem;}
+    .ngrid{display:grid;grid-template-columns:repeat(5,1fr);gap:0.35rem;}
+    .nc{background:rgba(124,58,237,0.12);border-radius:8px;padding:0.45rem 0.5rem;display:flex;flex-direction:column;gap:2px;}
+    .nd{color:rgba(255,255,255,0.4);font-size:0.6rem;}
+    .nn{color:#d8b4fe;font-weight:800;font-size:0.85rem;}
+    .ns{color:#a855f7;font-size:0.7rem;}
+    .nf{color:rgba(255,255,255,0.25);font-size:0.6rem;margin-top:0.35rem;font-family:monospace;}
+  </style>
+</head>
+<body>
+<header>
+  <h1>Calendario — Rueda Calendárica</h1>
+  <p>Tres ciclos concéntricos · un mismo punto de lectura · arrastra cualquier anillo</p>
+</header>
+<div class="wrap">
+  <canvas id="c" width="820" height="660"></canvas>
+  <div class="bar">
+    <button class="btn" id="pb">▶ Animar</button>
+    <div class="cg">Vel <input type="range" id="sp" min="1" max="60" value="12"></div>
+    <div class="cg">Dir. <button class="btn" id="db">→ Fwd</button></div>
+    <button class="btn" id="rb">⟳ Reiniciar</button>
+    <div class="gbs">
+      <button class="gb g1" data-r="0" data-d="-1">◀ 13</button>
+      <button class="gb g1" data-r="0" data-d="1">13 ▶</button>
+      <button class="gb g2" data-r="1" data-d="-1">◀ 20</button>
+      <button class="gb g2" data-r="1" data-d="1">20 ▶</button>
+      <button class="gb g3" data-r="2" data-d="-1">◀ 365</button>
+      <button class="gb g3" data-r="2" data-d="1">365 ▶</button>
+    </div>
+  </div>
+</div>
+<div class="info">
+  <div class="gc"><div class="gn">Numeral (Tzolk'in) — 13 días</div><div class="gv" id="v0" style="color:#21a366">1</div><div class="gi" id="i0">Numeral 1 de 13</div></div>
+  <div class="gc"><div class="gn">Signo (Tzolk'in) — 20 días</div><div class="gv" id="v1" style="color:#eab308">1</div><div class="gi" id="i1">Signo 1 de 20</div></div>
+  <div class="gc"><div class="gn">Haab — 365 días</div><div class="gv" id="v2" style="color:#dc2626">1</div><div class="gi" id="i2">Día 1 de 365</div></div>
+</div>
+<div class="nw">
+  <div class="nt">⚠️ Nemontemi — Modelo Meza / Intervalos Bₖ</div>
+  <div class="ngrid" id="np"></div>
+  <div class="nf" id="nk"></div>
+</div>
+<footer>LCM(13, 20, 365) = 18 980 días = 52 años para completar un ciclo completo · © 2026 Tlacuache Codex Lab</footer>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+const CX = W/2, CY = H/2;
+const PTR = 0; // pointer at 3-o'clock (right side = angle 0)
+
+// ── Ring definitions ─────────────────────────────────────────
+// All share the same center (CX, CY).
+// One reading "pointer" at angle -π/2 (12 o'clock) reads all three.
+const RINGS = [
+  {id:0, N:13,  ri:52,  ro:118, color:'#21a366', hi:'#2ed573', label:'13',  name:'Trecena'},
+  {id:1, N:20,  ri:128, ro:210, color:'#eab308', hi:'#fde047', label:'20',  name:'Veintena'},
+  {id:2, N:365, ri:220, ro:305, color:'#dc2626', hi:'#f87171', label:'365', name:'Haab'},
+];
+const NEMO_COLOR = '#7c3aed'; // purple for Nemontemi (last 5 Haab days)
+
+// Days elapsed (float). Each ring's angle = days * 2π / N
+let days = 0;
+
+function ringAngle(ring){ return days * 2*Math.PI / ring.N; }
+
+// ── Draw functions ────────────────────────────────────────────
+function drawRing(ring){
+  const{N,ri,ro,color,hi}=ring;
+  const tw = 2*Math.PI/N;
+  const angle0 = ringAngle(ring); // rotates from angle 0 (right)
+  const gap = tw * 0.06;
+  const rMid = (ri+ro)/2;
+  const sectorH = ro - ri;
+  const showNumbers = N <= 20;  // label sectors for 13T and 20T only
+
+  for(let i=0;i<N;i++){
+    const a1 = angle0 + i*tw + gap/2;
+    const a2 = angle0 + (i+1)*tw - gap/2;
+    // Active = sector whose midpoint aligns with pointer (angle 0, right side)
+    const sectorMid = (a1+a2)/2;
+    const normalised = ((sectorMid - angle0) % (2*Math.PI) + 2*Math.PI) % (2*Math.PI);
+    const isActive = normalised < tw * 1.01;
+    // Nemontemi: last 5 sectors of Haab (days 361-365, index 360-364)
+    const isNemo = N === 365 && i >= 360;
+
+    ctx.beginPath();
+    ctx.arc(CX,CY,ri,a1,a2);
+    ctx.arc(CX,CY,ro,a2,a1,true);
+    ctx.closePath();
+    let fill;
+    if(isNemo)    fill = isActive ? '#a855f7ee' : NEMO_COLOR + (i%2===0?'cc':'88');
+    else if(isActive) fill = hi+'ee';
+    else          fill = i%2===0 ? color+'cc' : color+'88';
+    ctx.fillStyle=fill; ctx.fill();
+    ctx.strokeStyle='#0a111a44'; ctx.lineWidth=0.6; ctx.stroke();
+
+    // Sector numbers for 13T and 20T
+    if(showNumbers){
+      const aMid=(a1+a2)/2;
+      const tx=CX+rMid*Math.cos(aMid), ty=CY+rMid*Math.sin(aMid);
+      ctx.save();
+      ctx.translate(tx,ty);
+      ctx.rotate(aMid + Math.PI/2); // radial orientation
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      const fs=Math.min(12,sectorH*0.55);
+      ctx.font=`700 ${fs}px Outfit`;
+      ctx.fillStyle=isActive?'#0a111a':'rgba(255,255,255,0.9)';
+      ctx.fillText(i+1,0,0);
+      ctx.restore();
+    }
+  }
+
+  // Rim strokes
+  ctx.beginPath(); ctx.arc(CX,CY,ro,0,2*Math.PI);
+  ctx.strokeStyle=color+'99'; ctx.lineWidth=1.5; ctx.stroke();
+  ctx.beginPath(); ctx.arc(CX,CY,ri,0,2*Math.PI);
+  ctx.strokeStyle=color+'55'; ctx.lineWidth=1; ctx.stroke();
+}
+
+function drawLabels(){
+  // Ring labels on the right side
+  RINGS.forEach(r=>{
+    const mid = (r.ri+r.ro)/2;
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.font=`600 ${Math.min(13,r.ro-r.ri-4)}px Outfit`;
+    ctx.fillStyle='rgba(255,255,255,0.35)';
+    ctx.fillText(r.label, CX+mid+4, CY);
+  });
+}
+
+function drawPointer(){
+  // Golden pointer at 3-o'clock (right side, angle=0)
+  const outerR = RINGS[2].ro + 18;
+  const innerR = RINGS[0].ri - 14;
+  // Horizontal reading line (right side)
+  ctx.beginPath();
+  ctx.moveTo(CX + innerR, CY);
+  ctx.lineTo(CX + outerR, CY);
+  ctx.strokeStyle='#fde047'; ctx.lineWidth=2;
+  ctx.setLineDash([4,3]); ctx.stroke(); ctx.setLineDash([]);
+  // Arrow triangle pointing left (into the rings)
+  ctx.beginPath();
+  ctx.moveTo(CX + outerR + 1, CY - 7);
+  ctx.lineTo(CX + outerR + 1, CY + 7);
+  ctx.lineTo(CX + outerR - 10, CY);
+  ctx.closePath();
+  ctx.fillStyle='#fde047'; ctx.fill();
+  ctx.font='600 10px Outfit'; ctx.fillStyle='#fde047';
+  ctx.textAlign='left'; ctx.textBaseline='middle';
+  ctx.fillText('Lectura', CX + outerR + 6, CY);
+
+  // Nemontemi legend
+  ctx.beginPath(); ctx.arc(CX + outerR + 6, CY + 20, 5, 0, 2*Math.PI);
+  ctx.fillStyle=NEMO_COLOR; ctx.fill();
+  ctx.font='500 9px Outfit'; ctx.fillStyle=NEMO_COLOR;
+  ctx.textAlign='left'; ctx.textBaseline='middle';
+  ctx.fillText('Nemontemi (días 361-365)', CX + outerR + 14, CY + 20);
+}
+
+function drawHub(){
+  // Central hub
+  ctx.beginPath(); ctx.arc(CX,CY,RINGS[0].ri-2,0,2*Math.PI);
+  const grad=ctx.createRadialGradient(CX,CY,0,CX,CY,RINGS[0].ri);
+  grad.addColorStop(0,'#1a2f42'); grad.addColorStop(1,'#0d1a26');
+  ctx.fillStyle=grad; ctx.fill();
+  ctx.strokeStyle='rgba(33,163,102,0.4)'; ctx.lineWidth=1.5; ctx.stroke();
+
+  // Center cross
+  ctx.strokeStyle='rgba(234,179,8,0.6)'; ctx.lineWidth=1;
+  for(const [dx,dy] of [[-18,0],[18,0],[0,-18],[0,18]]){
+    ctx.beginPath(); ctx.moveTo(CX,CY); ctx.lineTo(CX+dx,CY+dy); ctx.stroke();
+  }
+  ctx.beginPath(); ctx.arc(CX,CY,4,0,2*Math.PI);
+  ctx.fillStyle='#eab308'; ctx.fill();
+
+  // Day count in hub
+  const d = Math.floor(days);
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.font='700 13px Outfit'; ctx.fillStyle='#e2e8f0';
+  ctx.fillText(`Día ${(d%18980+18980)%18980+1}`, CX, CY);
+}
+
+function drawBackground(){
+  ctx.clearRect(0,0,W,H);
+  const bg=ctx.createRadialGradient(CX,CY,0,CX,CY,H);
+  bg.addColorStop(0,'#0f1f30'); bg.addColorStop(1,'#0a111a');
+  ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+  // Subtle glow
+  const glow=ctx.createRadialGradient(CX,CY,RINGS[1].ri,CX,CY,RINGS[2].ro+40);
+  glow.addColorStop(0,'rgba(33,163,102,0.04)'); glow.addColorStop(1,'transparent');
+  ctx.fillStyle=glow; ctx.fillRect(0,0,W,H);
+}
+
+function draw(){
+  drawBackground();
+  drawRing(RINGS[2]); // E3 outermost — draw first (behind)
+  drawRing(RINGS[1]); // E2
+  drawRing(RINGS[0]); // E1 innermost — draw last (in front)
+  drawPointer();
+  drawHub();
+  drawLabels();
+  // Hint
+  ctx.textAlign='right'; ctx.font='400 9px Outfit';
+  ctx.fillStyle='rgba(100,116,139,0.35)';
+  ctx.fillText('arrastra un anillo para girar el sistema',W-12,H-10);
+}
+
+// ── Active sector index for each ring ────────────────────────
+function activeSector(ring){
+  // Which sector is at the pointer (right side / angle 0)
+  const angle0 = ringAngle(ring);
+  const tw = 2*Math.PI/ring.N;
+  // sector i starts at angle0 + i*tw; pointer is at angle 0
+  let delta = ((0 - angle0) % (2*Math.PI) + 2*Math.PI) % (2*Math.PI);
+  return Math.floor(delta / tw) % ring.N;
+}
+
+const SIGNS=['Imix',"Ik'",'Akbal',"K'an",'Chikchan','Kimi',"Manik'",'Lamat','Muluk','Ok','Chuwen',"Eb'",'Ben','Ix','Men',"Kib'",'Kaban','Etznab','Kawak','Ajaw'];
+function getKfromDays(){
+  const n=((Math.floor(Math.abs(days))-1)%18980+18980)%18980+1;
+  return Math.ceil(n/365)||1;
+}
+function getNemoData(k){
+  return [0,1,2,3,4].map(i=>{
+    const q0=(k+i)%13; const q=q0===0?13:q0;
+    const r0=(5*k-4+i)%20; const r=r0===0?20:r0;
+    return{n:365*k-4+i,q,r,sign:SIGNS[r-1]};
+  });
+}
+function updateNemoPanel(){
+  const k=getKfromDays();
+  const nemo=getNemoData(k);
+  document.getElementById('np').innerHTML=nemo.map(({n,q,r,sign})=>
+    `<div class="nc"><span class="nd">Día ${n}</span><span class="nn">${q}</span><span class="ns">Signo ${r}</span></div>`
+  ).join('');
+  document.getElementById('nk').textContent=`Año k=${k} · q=(n-360)%13 · r=(n-360)%20`;
+}
+
+function updateUI(){
+  const d = (Math.floor(days) % 18980 + 18980) % 18980;
+  const labels = [['Numeral','de 13'],['Signo','de 20'],['Día','de 365']];
+  RINGS.forEach((r,i)=>{
+    const sec = activeSector(r);
+    document.getElementById('v'+i).textContent = sec+1;
+    document.getElementById('i'+i).textContent = `${labels[i][0]} ${sec+1} ${labels[i][1]}`;
+  });
+  updateNemoPanel();
+}
+
+// ── Advance by N days ─────────────────────────────────────────
+function advance(deltaDays){
+  days += deltaDays;
+  draw(); updateUI();
+}
+
+// ── Animation ─────────────────────────────────────────────────
+let animating=false, dir=1;
+function tick(){
+  advance(dir * parseInt(document.getElementById('sp').value) * 0.04);
+  if(animating) requestAnimationFrame(tick);
+}
+document.getElementById('pb').addEventListener('click',function(){
+  animating=!animating;
+  this.textContent=animating?'⏸ Pausar':'▶ Animar';
+  this.classList.toggle('on',animating);
+  if(animating) tick();
+});
+document.getElementById('db').addEventListener('click',function(){
+  dir*=-1; this.textContent=dir>0?'→ Fwd':'← Bck';
+});
+document.getElementById('rb').addEventListener('click',()=>{
+  days=0; draw(); updateUI();
+});
+
+// Step buttons (step 1 day per button)
+document.querySelectorAll('.gb').forEach(btn=>{
+  let iv=null;
+  const s=()=>{
+    const ring=RINGS[+btn.dataset.r];
+    advance(+btn.dataset.d * ring.N / ring.N); // 1 day
+  };
+  btn.addEventListener('mousedown',()=>{s();iv=setInterval(s,80);});
+  btn.addEventListener('mouseup',()=>clearInterval(iv));
+  btn.addEventListener('mouseleave',()=>clearInterval(iv));
+  btn.addEventListener('touchstart',e=>{e.preventDefault();s();iv=setInterval(s,80);},{passive:false});
+  btn.addEventListener('touchend',()=>clearInterval(iv));
+});
+
+// ── Drag interaction ──────────────────────────────────────────
+let drag=null, lastAngle=0;
+
+function getRingAt(mx,my){
+  const d=Math.hypot(mx-CX,my-CY);
+  for(let i=RINGS.length-1;i>=0;i--){
+    const r=RINGS[i];
+    if(d>=r.ri && d<=r.ro) return r;
+  }
+  return null;
+}
+
+function pp(e){
+  const r=canvas.getBoundingClientRect();
+  const sx=canvas.width/r.width, sy=canvas.height/r.height;
+  const s=e.touches?e.touches[0]:e;
+  return{x:(s.clientX-r.left)*sx,y:(s.clientY-r.top)*sy};
+}
+
+canvas.addEventListener('mousedown',e=>{
+  const{x,y}=pp(e);const r=getRingAt(x,y);
+  if(r){drag=r; lastAngle=Math.atan2(y-CY,x-CX);}
+});
+canvas.addEventListener('mousemove',e=>{
+  if(!drag)return;
+  const{x,y}=pp(e);
+  const a=Math.atan2(y-CY,x-CX);
+  let da=a-lastAngle;
+  if(da>Math.PI)da-=2*Math.PI; if(da<-Math.PI)da+=2*Math.PI;
+  // Convert angular drag to days: drag on ring with N teeth → days = da/(2π)*N
+  advance(da/(2*Math.PI)*drag.N);
+  lastAngle=a;
+});
+['mouseup','mouseleave'].forEach(ev=>canvas.addEventListener(ev,()=>drag=null));
+canvas.addEventListener('touchstart',e=>{
+  e.preventDefault();const{x,y}=pp(e);const r=getRingAt(x,y);
+  if(r){drag=r;lastAngle=Math.atan2(y-CY,x-CX);}
+},{passive:false});
+canvas.addEventListener('touchmove',e=>{
+  e.preventDefault();if(!drag)return;
+  const{x,y}=pp(e);
+  let a=Math.atan2(y-CY,x-CX);
+  let da=a-lastAngle;
+  if(da>Math.PI)da-=2*Math.PI;if(da<-Math.PI)da+=2*Math.PI;
+  advance(da/(2*Math.PI)*drag.N);
+  lastAngle=a;
+},{passive:false});
+canvas.addEventListener('touchend',()=>drag=null);
+
+draw(); updateUI();
+</script>
+</body>
+</html>

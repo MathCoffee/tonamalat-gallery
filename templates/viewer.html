@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ item.title }} - Tonamalat Gallery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="viewer-body">
+    <div class="background-shapes">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+        <div class="shape shape3"></div>
+    </div>
+
+    <div class="viewer-layout">
+        <nav class="viewer-nav glass-effect">
+            <a href="{{ url_for('index') }}" class="back-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Volver a la Galería
+            </a>
+            <h1 class="viewer-title">{{ item.title }}</h1>
+        </nav>
+
+        <div class="iframe-container glass-effect">
+            <iframe src="{{ url_for('static', filename='interactives/' + item.filename) }}" frameborder="0" allowfullscreen></iframe>
+        </div>
+
+        <footer class="viewer-footer">
+            &copy; 2026 Tlacuache Codex Lab. Todos los derechos reservados.
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tonamalat Gallery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="background-shapes">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+        <div class="shape shape3"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>Galería Interactiva Tonamalat</h1>
+            <p>Explora las simulaciones matemáticas y calendáricas.</p>
+        </header>
+
+        <div class="gallery-grid">
+            {% for item in interactives %}
+            <div class="card glass-effect glow-on-hover-card">
+                <span class="category-badge">{{ item.category }}</span>
+                <h2>{{ item.title }}</h2>
+                <p>{{ item.description }}</p>
+                <a href="{{ url_for('view_item', item_id=item.id) }}" class="btn">Explorar Modelo</a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <footer>
+            &copy; 2026 Tlacuache Codex Lab. Todos los derechos reservados.
+        </footer>
+    </div>
+</body>
+</html>
