@@ -22,12 +22,14 @@
                 </svg>
                 Volver a la Galería
             </a>
-            <h1 class="viewer-title">{{ item.title }}</h1>
+            <h1 class="viewer-title">{{ item.title | safe }}</h1>
         </nav>
 
         <div class="iframe-container glass-effect">
             {% if item.type == 'interactive' %}
                 <iframe src="{{ url_for('static', filename='interactives/' + item.filename) }}" frameborder="0" allowfullscreen></iframe>
+            {% elif item.type == 'representacion' %}
+                <iframe src="{{ url_for('static', filename='representaciones/' + item.filename) }}" frameborder="0" allowfullscreen></iframe>
             {% elif item.type == 'video' %}
                 <video controls autoplay loop style="width: 100%; height: 100%; object-fit: contain; outline: none;">
                     <source src="{{ url_for('static', filename='simulations/' + item.filename) }}" type="video/mp4">
